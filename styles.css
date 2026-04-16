@@ -541,23 +541,6 @@ button:disabled { opacity: 0.62; cursor: not-allowed; }
   margin: 0;
 }
 
-.admin-hub {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  align-items: center;
-}
-
-.admin-hub h2 {
-  margin: var(--space-sm) 0 var(--space-xs);
-}
-
-.admin-hub .actions {
-  margin-top: 0;
-  justify-content: flex-end;
-}
-
 .executive-strip,
 .dashboard-wide {
   grid-column: 1 / -1;
@@ -917,7 +900,6 @@ canvas {
     grid-template-columns: 1fr;
   }
   .executive-strip,
-  .admin-hub,
   .dashboard-primary,
   .dashboard-side,
   .dashboard-wide,
@@ -957,13 +939,9 @@ canvas {
   .page,
   .narrow { width: min(100% - 20px, 100%); }
   .topbar,
-  .admin-hub,
   .admin-panel,
   .card {
     padding: var(--space-md);
-  }
-  .admin-hub {
-    display: grid;
   }
   .admin-panel {
     display: grid;

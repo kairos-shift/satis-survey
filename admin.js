@@ -219,10 +219,6 @@ function bind() {
     sessionStorage.removeItem(keyStore);
     location.reload();
   });
-  $('hub-logout')?.addEventListener('click', () => {
-    sessionStorage.removeItem(keyStore);
-    location.reload();
-  });
 }
 
 setupPasswordToggles();
