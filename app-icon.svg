@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="BBT Survey">
+  <rect width="512" height="512" rx="96" fill="#0b3d39"/>
+  <rect x="76" y="84" width="360" height="344" rx="28" fill="#f7fbf9"/>
+  <path d="M128 164h256M128 236h256M128 308h152" fill="none" stroke="#0b3d39" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="360" cy="314" r="30" fill="#b18b2f"/>
+</svg>

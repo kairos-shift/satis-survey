@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://smlqigkadxnmtpexpwsq.supabase.co; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0b3d39">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BBT Survey">
+  <title>แบบประเมินความพึงพอใจ | รพ.บางบัวทอง</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="app-icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page narrow">
+    <header class="topbar">
+      <div>
+        <div class="brand-kicker">Bangbuatong Hospital</div>
+        <h1 id="page-title"></h1>
+        <p class="subtitle" id="page-subtitle"></p>
+        <p class="meta" id="page-meta"></p>
+      </div>
+    </header>
+
+    <section class="card notice">
+      <strong>ไม่ระบุตัวตน</strong>
+      <p id="anonymity-note"></p>
+    </section>
+
+    <section id="config-error" class="card error hidden"></section>
+
+    <section id="already-submitted" class="card hidden">
+      <h2>ท่านได้ส่งแบบประเมินแล้ว</h2>
+      <p class="muted">ขอบคุณที่เข้าร่วมโครงการปฐมนิเทศ</p>
+    </section>
+
+    <section id="pin-card" class="card">
+      <h2>เข้าสู่แบบประเมิน</h2>
+      <form id="pin-form">
+        <label for="pin">รหัสเข้าร่วม</label>
+        <div class="password-field">
+          <input id="pin" name="pin" type="password" autocomplete="off" required>
+          <button class="toggle-password" type="button" data-target="pin" aria-label="แสดงรหัสเข้าร่วม" aria-pressed="false">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M2.7 12s3.4-6.2 9.3-6.2 9.3 6.2 9.3 6.2-3.4 6.2-9.3 6.2S2.7 12 2.7 12Z"></path>
+              <circle cx="12" cy="12" r="2.8"></circle>
+            </svg>
+          </button>
+        </div>
+        <div class="actions">
+          <button class="primary" type="submit">เข้าสู่แบบประเมิน</button>
+          <span id="pin-message" class="small"></span>
+        </div>
+      </form>
+
+      <details id="admin-unlock" class="admin-unlock">
+        <summary>สำหรับผู้ดูแล</summary>
+        <form id="admin-key-form">
+          <label for="admin-master-key">Master Key</label>
+          <div class="password-field">
+            <input id="admin-master-key" type="password" autocomplete="off">
+            <button class="toggle-password" type="button" data-target="admin-master-key" aria-label="แสดง Master Key" aria-pressed="false">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <path d="M2.7 12s3.4-6.2 9.3-6.2 9.3 6.2 9.3 6.2-3.4 6.2-9.3 6.2S2.7 12 2.7 12Z"></path>
+                <circle cx="12" cy="12" r="2.8"></circle>
+              </svg>
+            </button>
+          </div>
+          <div class="actions">
+            <button class="secondary" type="submit">เปิดแผงผู้ดูแล</button>
+            <span id="admin-key-message" class="small"></span>
+          </div>
+        </form>
+      </details>
+    </section>
+
+    <section id="admin-panel" class="admin-panel card hidden">
+      <div>
+        <div class="brand-kicker">Admin Access</div>
+        <h2>แผงผู้ดูแล</h2>
+        <p class="muted">Master Key ถูกต้อง สามารถเปิด Dashboard และรายงานได้จากหน้านี้</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="admin.html">Dashboard</a>
+        <a class="button secondary" href="report.html">รายงานพิมพ์</a>
+        <button id="admin-panel-logout" class="ghost" type="button">ออกจากระบบผู้ดูแล</button>
+      </div>
+    </section>
+
+    <form id="survey-form" class="hidden" novalidate>
+      <section class="progress-card">
+        <div>
+          <div id="progress-count" class="brand-kicker">ส่วนที่ 1 จาก 5</div>
+          <h2 id="progress-title">ข้อมูลทั่วไปของผู้ตอบแบบประเมิน</h2>
+          <p id="draft-status" class="small muted">บันทึกคำตอบไว้ในเครื่องนี้ระหว่างตอบแบบประเมิน</p>
+        </div>
+        <ol id="section-progress" class="section-progress" aria-label="ความคืบหน้าแบบประเมิน"></ol>
+      </section>
+
+      <section class="card survey-section" data-section-index="0">
+        <h2>ส่วนที่ 1 ข้อมูลทั่วไปของผู้ตอบแบบประเมิน</h2>
+        <div class="grid">
+          <div class="field" data-field="gender">
+            <span class="label">เพศ</span>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="gender" value="male"> ชาย</label>
+              <label class="choice"><input type="radio" name="gender" value="female"> หญิง</label>
+              <label class="choice"><input type="radio" name="gender" value="other"> อื่นๆ</label>
+            </div>
+          </div>
+          <div class="field" data-field="age">
+            <label for="age">อายุ</label>
+            <input id="age" name="age" type="number" min="18" max="80" inputmode="numeric" required>
+          </div>
+          <div class="field full" data-field="role">
+            <span class="label">ตำแหน่ง</span>
+            <div id="role-options" class="choice-row"></div>
+          </div>
+          <div class="field">
+            <label for="institution">สถาบันที่จบการศึกษา <span class="muted">(ไม่บังคับ)</span></label>
+            <input id="institution" name="institution" type="text" autocomplete="off">
+          </div>
+          <div class="field" data-field="graduation_year">
+            <label for="graduation_year">ปีที่จบการศึกษา พ.ศ.</label>
+            <input id="graduation_year" name="graduation_year" type="number" min="2500" max="2600" inputmode="numeric" required>
+          </div>
+        </div>
+      </section>
+
+      <section class="card survey-section" data-section-index="1">
+        <h2>ส่วนที่ 2 ความพึงพอใจต่อการจัดโครงการ</h2>
+        <p class="muted" id="legend-1"></p>
+        <div id="s2-container"></div>
+      </section>
+
+      <section class="card survey-section" data-section-index="2">
+        <h2>ส่วนที่ 3 ความพึงพอใจรายวัน</h2>
+        <p class="muted" id="legend-2"></p>
+        <div id="s3-container"></div>
+      </section>
+
+      <section class="card survey-section" data-section-index="3">
+        <h2>ส่วนที่ 4 ความรู้ ความเข้าใจ และความพร้อมในการปฏิบัติงาน</h2>
+        <p class="muted" id="legend-3"></p>
+        <div id="s4-container"></div>
+      </section>
+
+      <section class="card survey-section" data-section-index="4">
+        <h2>ส่วนที่ 5 ความคิดเห็นและข้อเสนอแนะ</h2>
+        <p class="muted">คำถามส่วนนี้ไม่บังคับ</p>
+        <div id="s5-container" class="grid"></div>
+      </section>
+
+      <section class="card survey-nav">
+        <div id="validation-message" class="error"></div>
+        <div class="actions">
+          <button id="previous-section" class="secondary" type="button">ย้อนกลับ</button>
+          <button id="next-section" class="primary" type="button">ถัดไป</button>
+          <button id="submit-button" class="primary" type="submit">ส่งแบบประเมิน</button>
+        </div>
+      </section>
+    </form>
+
+    <section id="thank-you" class="card hidden">
+      <h2>ขอขอบคุณที่สละเวลาในการตอบแบบประเมิน</h2>
+      <p class="muted">ข้อมูลของท่านจะถูกใช้เพื่อปรับปรุงโครงการในปีต่อไปเท่านั้น</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="survey-data.js"></script>
+  <script src="index.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>
