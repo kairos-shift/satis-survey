@@ -82,12 +82,14 @@ function renderForm() {
 
 function showForm() {
   $('pin-card').classList.add('hidden');
+  $('admin-panel')?.classList.add('hidden');
   $('survey-form').classList.remove('hidden');
   setSection(currentSection, { scroll: false });
 }
 
 function showAdminPanel() {
-  $('admin-unlock')?.classList.add('hidden');
+  $('pin-card').classList.add('hidden');
+  $('survey-form').classList.add('hidden');
   $('admin-panel')?.classList.remove('hidden');
 }
 
@@ -304,10 +306,16 @@ function bind() {
     button.disabled = true;
     $('pin-message').textContent = '';
     try {
-      if (await verifyPin($('pin').value)) {
+      const key = $('pin').value;
+      if (await verifyPin(key)) {
         sessionStorage.setItem(unlockKey, '1');
         sessionStorage.removeItem(attemptsKey);
         showForm();
+      } else if (await verifyMasterKey(key)) {
+        sessionStorage.setItem(adminKeyStore, key);
+        $('pin').value = '';
+        sessionStorage.removeItem(attemptsKey);
+        showAdminPanel();
       } else {
         recordWrongPin();
         $('pin-message').textContent = lockMessage() || 'รหัสไม่ถูกต้อง';
@@ -322,35 +330,10 @@ function bind() {
     }
   });
 
-  $('admin-key-form').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const button = event.submitter;
-    button.disabled = true;
-    $('admin-key-message').textContent = '';
-    try {
-      const key = $('admin-master-key').value;
-      if (await verifyMasterKey(key)) {
-        sessionStorage.setItem(adminKeyStore, key);
-        $('admin-master-key').value = '';
-        $('admin-key-message').textContent = '';
-        showAdminPanel();
-      } else {
-        $('admin-key-message').textContent = 'Master Key ไม่ถูกต้อง';
-        $('admin-key-message').className = 'small error';
-      }
-    } catch (error) {
-      console.error(error);
-      $('admin-key-message').textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
-      $('admin-key-message').className = 'small error';
-    } finally {
-      button.disabled = false;
-    }
-  });
-
   $('admin-panel-logout').addEventListener('click', () => {
     sessionStorage.removeItem(adminKeyStore);
     $('admin-panel').classList.add('hidden');
-    $('admin-unlock').classList.remove('hidden');
+    $('pin-card').classList.remove('hidden');
   });
 
   $('survey-form').addEventListener('submit', async (event) => {
