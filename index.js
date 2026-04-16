@@ -336,6 +336,11 @@ function bind() {
     $('pin-card').classList.remove('hidden');
   });
 
+  $('admin-open-survey').addEventListener('click', () => {
+    sessionStorage.setItem(unlockKey, '1');
+    showForm();
+  });
+
   $('survey-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!validate()) return;
