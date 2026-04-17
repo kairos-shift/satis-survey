@@ -7,6 +7,15 @@ let summary = [];
 
 function $(id) { return document.getElementById(id); }
 
+function getAdminKey() {
+  return sessionStorage.getItem(keyStore) || localStorage.getItem(keyStore);
+}
+
+function clearAdminKey() {
+  sessionStorage.removeItem(keyStore);
+  localStorage.removeItem(keyStore);
+}
+
 function setupPasswordToggles() {
   document.querySelectorAll('.toggle-password').forEach((button) => {
     button.addEventListener('click', () => {
@@ -29,12 +38,6 @@ function initClient() {
   }
   client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
   return true;
-}
-
-async function verify(key) {
-  const { data, error } = await client.rpc('verify_master_key', { p_survey_id: window.SURVEY_ID, p_key: key });
-  if (error) throw error;
-  return data === true;
 }
 
 async function load(key) {
@@ -286,33 +289,20 @@ function render() {
 
 function bind() {
   $('print-report')?.addEventListener('click', () => window.print());
-
-  $('key-form').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const key = $('master-key').value;
-    event.submitter.disabled = true;
-    try {
-      if (await verify(key)) {
-        sessionStorage.setItem(keyStore, key);
-        await load(key);
-      } else {
-        $('gate-message').textContent = 'Master Key ไม่ถูกต้อง';
-        $('gate-message').className = 'small error';
-      }
-    } catch (error) {
-      console.error(error);
-      $('gate-message').textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
-      $('gate-message').className = 'small error';
-    } finally {
-      event.submitter.disabled = false;
-    }
-  });
 }
 
 setupPasswordToggles();
 
 if (initClient()) {
   bind();
-  const saved = sessionStorage.getItem(keyStore);
-  if (saved) load(saved).catch(() => sessionStorage.removeItem(keyStore));
+  const saved = getAdminKey();
+  if (saved) {
+    load(saved).catch((error) => {
+      console.error(error);
+      clearAdminKey();
+      location.replace('admin.html');
+    });
+  } else {
+    location.replace('admin.html');
+  }
 }

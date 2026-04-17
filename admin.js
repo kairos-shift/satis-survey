@@ -10,6 +10,20 @@ let chart = null;
 
 function $(id) { return document.getElementById(id); }
 
+function saveAdminKey(key) {
+  sessionStorage.setItem(keyStore, key);
+  localStorage.setItem(keyStore, key);
+}
+
+function getAdminKey() {
+  return sessionStorage.getItem(keyStore) || localStorage.getItem(keyStore);
+}
+
+function clearAdminKey() {
+  sessionStorage.removeItem(keyStore);
+  localStorage.removeItem(keyStore);
+}
+
 function setupPasswordToggles() {
   document.querySelectorAll('.toggle-password').forEach((button) => {
     button.addEventListener('click', () => {
@@ -199,7 +213,7 @@ function bind() {
     try {
       const key = $('master-key').value;
       if (await verify(key)) {
-        sessionStorage.setItem(keyStore, key);
+        saveAdminKey(key);
         await load(key);
       } else {
         wrongAttempt();
@@ -216,7 +230,7 @@ function bind() {
   });
   $('excel').addEventListener('click', exportExcel);
   $('logout').addEventListener('click', () => {
-    sessionStorage.removeItem(keyStore);
+    clearAdminKey();
     location.reload();
   });
 }
@@ -225,6 +239,6 @@ setupPasswordToggles();
 
 if (initClient()) {
   bind();
-  const saved = sessionStorage.getItem(keyStore);
-  if (saved) load(saved).catch(() => sessionStorage.removeItem(keyStore));
+  const saved = getAdminKey();
+  if (saved) load(saved).catch(() => clearAdminKey());
 }

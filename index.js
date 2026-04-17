@@ -19,6 +19,20 @@ let currentSection = 0;
 
 function $(id) { return document.getElementById(id); }
 
+function saveAdminKey(key) {
+  sessionStorage.setItem(adminKeyStore, key);
+  localStorage.setItem(adminKeyStore, key);
+}
+
+function getAdminKey() {
+  return sessionStorage.getItem(adminKeyStore) || localStorage.getItem(adminKeyStore);
+}
+
+function clearAdminKey() {
+  sessionStorage.removeItem(adminKeyStore);
+  localStorage.removeItem(adminKeyStore);
+}
+
 function setupPasswordToggles() {
   document.querySelectorAll('.toggle-password').forEach((button) => {
     button.addEventListener('click', () => {
@@ -312,7 +326,7 @@ function bind() {
         sessionStorage.removeItem(attemptsKey);
         showForm();
       } else if (await verifyMasterKey(key)) {
-        sessionStorage.setItem(adminKeyStore, key);
+        saveAdminKey(key);
         $('pin').value = '';
         sessionStorage.removeItem(attemptsKey);
         showAdminPanel();
@@ -331,14 +345,9 @@ function bind() {
   });
 
   $('admin-panel-logout').addEventListener('click', () => {
-    sessionStorage.removeItem(adminKeyStore);
+    clearAdminKey();
     $('admin-panel').classList.add('hidden');
     $('pin-card').classList.remove('hidden');
-  });
-
-  $('admin-open-survey').addEventListener('click', () => {
-    sessionStorage.setItem(unlockKey, '1');
-    showForm();
   });
 
   $('survey-form').addEventListener('submit', async (event) => {
@@ -375,6 +384,6 @@ if (localStorage.getItem(submittedKey)) {
   restoreDraft();
   setSection(currentSection, { scroll: false });
   bind();
-  if (sessionStorage.getItem(adminKeyStore)) showAdminPanel();
+  if (getAdminKey()) showAdminPanel();
   if (sessionStorage.getItem(unlockKey) === '1') showForm();
 }
