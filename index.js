@@ -6,6 +6,7 @@ const unlockKey = 'bbt_orientation_2569_unlocked';
 const adminKeyStore = 'bbt_orientation_2569_master_key';
 const attemptsKey = 'bbt_orientation_2569_pin_attempts';
 const lockKey = 'bbt_orientation_2569_pin_lock_until';
+const surveyClosed = true;
 const sectionTitles = [
   'ข้อมูลทั่วไปของผู้ตอบแบบประเมิน',
   'ความพึงพอใจต่อการจัดโครงการ',
@@ -321,7 +322,7 @@ function bind() {
     $('pin-message').textContent = '';
     try {
       const key = $('pin').value;
-      if (await verifyPin(key)) {
+      if (!surveyClosed && await verifyPin(key)) {
         sessionStorage.setItem(unlockKey, '1');
         sessionStorage.removeItem(attemptsKey);
         showForm();
@@ -332,7 +333,7 @@ function bind() {
         showAdminPanel();
       } else {
         recordWrongPin();
-        $('pin-message').textContent = lockMessage() || 'รหัสไม่ถูกต้อง';
+        $('pin-message').textContent = surveyClosed ? 'ปิดรับแบบประเมินแล้ว' : lockMessage() || 'รหัสไม่ถูกต้อง';
         $('pin-message').className = 'small error';
       }
     } catch (error) {
@@ -385,5 +386,5 @@ if (localStorage.getItem(submittedKey)) {
   setSection(currentSection, { scroll: false });
   bind();
   if (getAdminKey()) showAdminPanel();
-  if (sessionStorage.getItem(unlockKey) === '1') showForm();
+  if (!surveyClosed && sessionStorage.getItem(unlockKey) === '1') showForm();
 }

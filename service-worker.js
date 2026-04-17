@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bbt-orientation-2569-v14';
+const CACHE_NAME = 'bbt-orientation-2569-v15';
 const APP_SHELL = [
   './',
   './index.html',

@@ -39,9 +39,10 @@
     </section>
 
     <section id="pin-card" class="card">
-      <h2>เข้าสู่แบบประเมิน</h2>
+      <h2>ปิดรับแบบประเมินแล้ว</h2>
+      <p class="muted">ขอบคุณทุกท่านที่ร่วมตอบแบบประเมิน ผู้ดูแลยังสามารถเข้าสู่ Dashboard และรายงานได้ด้วย Master Key</p>
       <form id="pin-form">
-        <label for="pin">รหัสเข้าร่วม / Master Key</label>
+        <label for="pin">Master Key สำหรับผู้ดูแล</label>
         <div class="password-field">
           <input id="pin" name="pin" type="password" autocomplete="off" required>
           <button class="toggle-password" type="button" data-target="pin" aria-label="แสดงรหัสเข้าร่วม" aria-pressed="false">
@@ -52,7 +53,7 @@
           </button>
         </div>
         <div class="actions">
-          <button class="primary" type="submit">เข้าสู่แบบประเมิน</button>
+          <button class="primary" type="submit">เข้าสู่ระบบผู้ดูแล</button>
           <span id="pin-message" class="small"></span>
         </div>
       </form>
